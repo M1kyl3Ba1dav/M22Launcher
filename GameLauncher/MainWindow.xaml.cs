@@ -7,14 +7,28 @@ namespace GameLauncher
 {
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
             InitializeComponent();
+            GameList.ItemsSource = LoadAllGames();
+        }
+
+        private List<Game> LoadAllGames()
+        {
+            List<Game> games = new List<Game>();
 
             if (Directory.Exists(@"C:\Program Files (x86)\Steam\steamapps\common"))
             {
-                GameList.ItemsSource = ScanGames(@"C:\Program Files (x86)\Steam\steamapps\common");
+                games.AddRange(ScanGames(@"C:\Program Files (x86)\Steam\steamapps\common"));
             }
+
+            if (Directory.Exists(@"C:\Program Files\Epic Games"))
+            {
+                games.AddRange(ScanGames(@"C:\Program Files\Epic Games"));
+            }
+
+            return games;
         }
 
         private List<Game> ScanGames(string folder)
