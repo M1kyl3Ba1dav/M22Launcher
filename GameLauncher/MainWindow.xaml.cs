@@ -1,29 +1,88 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+
 
 namespace GameLauncher
 {
     public partial class MainWindow : Window
     {
+        private List<Game> allGames = new List<Game>();
+        private ICollectionView gameView;
         public MainWindow()
         {
             InitializeComponent();
+
             if (!Directory.Exists(coverFolder))
                 Directory.CreateDirectory(coverFolder);
+
             LoadGames();
         }
 
         // LOAD ALL GAMES
         private async void LoadGames()
         {
-            GameList.ItemsSource = await LoadAllGames();
+            Trace.WriteLine("Loading games...");
+            allGames = await LoadAllGames();
+
+            gameView = CollectionViewSource.GetDefaultView(allGames);
+            gameView.Filter = GameFilter;
+
+            GameList.ItemsSource = gameView;
         }
+
+        private bool GameFilter(object item)
+        {
+            var game = item as Game;
+
+            if (game == null)
+                return false;
+
+            // SEARCH FILTER
+            if (!string.IsNullOrWhiteSpace(SearchBox.Text))
+            {
+                if (!game.Name.ToLower().Contains(SearchBox.Text.ToLower()))
+                    return false;
+            }
+
+            // LAUNCHER FILTER
+            if (FilterBox.SelectedItem is ComboBoxItem selected)
+            {
+                string filter = selected.Content.ToString();
+
+                if (filter != "All")
+                {
+                    if (game.ExecutablePath
+                        .IndexOf(filter, System.StringComparison.OrdinalIgnoreCase) < 0)
+                        return false;
+
+                }
+            }
+
+            return true;
+        }
+
+        private void SearchBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            gameView?.Refresh();
+        }
+
+        private void FilterBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            gameView?.Refresh();
+        }
+
+
+
         private readonly string coverFolder = Path.Combine(Directory.GetCurrentDirectory(), "Covers");
 
 
@@ -56,7 +115,14 @@ namespace GameLauncher
             // Add cover art
             await AddCoverArt(games);
 
+            // REMOVE DUPLICATES BY EXECUTABLE PATH
+            games = games
+                .GroupBy(g => g.ExecutablePath)
+                .Select(g => g.First())
+                .ToList();
+
             return games;
+
         }
 
         // GENERIC FOLDER SCANNER
@@ -69,7 +135,7 @@ namespace GameLauncher
             {
                 var exes = Directory.GetFiles(dir, "*.exe");
 
-                if (exes.Length > 0)
+                if (exes.Length > 0 && !games.Any(g => g.ExecutablePath == exes[0]))
                 {
                     games.Add(new Game
                     {
@@ -91,13 +157,11 @@ namespace GameLauncher
             string steamRoot = @"C:\Program Files (x86)\Steam";
             string libraryFile = Path.Combine(steamRoot, @"steamapps\libraryfolders.vdf");
 
-            libraries.Add(Path.Combine(steamRoot, @"steamapps\common"));
-
             if (File.Exists(libraryFile))
             {
                 foreach (var line in File.ReadAllLines(libraryFile))
                 {
-                    if (line.Contains(":\\"))
+                    if (line.Contains(":\\")) // detects library paths
                     {
                         string path = line.Split('"')[3];
                         libraries.Add(Path.Combine(path, "steamapps", "common"));
@@ -107,6 +171,7 @@ namespace GameLauncher
 
             return libraries;
         }
+
 
         // EPIC MANIFEST SCANNER
 

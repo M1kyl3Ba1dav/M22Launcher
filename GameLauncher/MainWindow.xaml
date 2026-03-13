@@ -9,7 +9,44 @@
 
     <Grid Background="#1e1e1e">
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- SEARCH BAR -->
+        <TextBox x:Name="SearchBox"
+             Grid.Row="0"
+             Margin="10"
+             Height="35"
+             Background="#2d2d2d"
+             Foreground="White"
+             BorderBrush="#444"
+             TextChanged="SearchBox_TextChanged"
+             />
+
+        <!-- FILTER DROPDOWN -->
+        <ComboBox x:Name="FilterBox"
+              Grid.Row="1"
+              Margin="10"
+              Height="35"
+              Background="#2d2d2d"
+              Foreground="White"
+              SelectionChanged="FilterBox_SelectionChanged">
+
+            <ComboBoxItem Content="All" IsSelected="True"/>
+            <ComboBoxItem Content="Steam"/>
+            <ComboBoxItem Content="Epic"/>
+            <ComboBoxItem Content="Riot"/>
+            <ComboBoxItem Content="Blizzard"/>
+            <ComboBoxItem Content="Xbox"/>
+
+        </ComboBox>
+
+        <!-- GAME LIST (UNCHANGED DESIGN) -->
+        <ScrollViewer Grid.Row="2"
+                  VerticalScrollBarVisibility="Auto">
 
             <ItemsControl x:Name="GameList">
 
@@ -24,29 +61,29 @@
                     <DataTemplate>
 
                         <Border Width="180"
-                                Height="220"
-                                Margin="10"
-                                CornerRadius="10"
-                                Background="#2d2d2d"
-                                Cursor="Hand">
+                            Height="220"
+                            Margin="10"
+                            CornerRadius="10"
+                            Background="#2d2d2d"
+                            Cursor="Hand">
 
                             <StackPanel>
 
                                 <Image Source="{Binding ImagePath}"
-                                       Height="150"
-                                       Stretch="Fill"/>
+                                   Height="150"
+                                   Stretch="Fill"/>
 
                                 <TextBlock Text="{Binding Name}"
-                                           Foreground="White"
-                                           FontSize="16"
-                                           Margin="5"
-                                           TextAlignment="Center"
-                                           TextWrapping="Wrap"/>
+                                       Foreground="White"
+                                       FontSize="16"
+                                       Margin="5"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap"/>
 
                                 <Button Content="Play"
-                                        Tag="{Binding ExecutablePath}"
-                                        Margin="5"
-                                        Click="PlayGame_Click"/>
+                                    Tag="{Binding ExecutablePath}"
+                                    Margin="5"
+                                    Click="PlayGame_Click"/>
 
                             </StackPanel>
 
