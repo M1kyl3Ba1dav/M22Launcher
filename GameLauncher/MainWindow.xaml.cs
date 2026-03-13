@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,8 @@ namespace GameLauncher
 {
     public partial class MainWindow : Window
     {
+        private readonly string cacheFile = Path.Combine(Directory.GetCurrentDirectory(), "games.json");
+        private static readonly HttpClient httpClient = new HttpClient();
         private List<Game> allGames = new List<Game>();
         private ICollectionView gameView;
         public MainWindow()
@@ -32,13 +35,28 @@ namespace GameLauncher
         private async void LoadGames()
         {
             Trace.WriteLine("Loading games...");
-            allGames = await LoadAllGames();
+
+            if (File.Exists(cacheFile))
+            {
+                // LOAD FROM CACHE
+                string json = File.ReadAllText(cacheFile);
+                allGames = JsonConvert.DeserializeObject<List<Game>>(json);
+            }
+            else
+            {
+                allGames = await LoadAllGames();
+
+                // SAVE TO CACHE
+                string json = JsonConvert.SerializeObject(allGames, Formatting.Indented);
+                File.WriteAllText(cacheFile, json);
+            }
 
             gameView = CollectionViewSource.GetDefaultView(allGames);
             gameView.Filter = GameFilter;
 
             GameList.ItemsSource = gameView;
         }
+
 
         private bool GameFilter(object item)
         {
@@ -209,11 +227,14 @@ namespace GameLauncher
 
         private async Task AddCoverArt(List<Game> games)
         {
-            foreach (var game in games)
+            var tasks = games.Select(async game =>
             {
                 game.ImagePath = await DownloadCover(game.Name);
-            }
+            });
+
+            await Task.WhenAll(tasks);
         }
+
 
         private async Task<string> DownloadCover(string gameName)
         {
@@ -229,7 +250,7 @@ namespace GameLauncher
 
                 using (HttpClient client = new HttpClient())
                 {
-                    var response = await client.GetStringAsync(url);
+                    var response = await httpClient.GetStringAsync(url);
 
                     JObject json = JObject.Parse(response);
 
@@ -279,6 +300,42 @@ namespace GameLauncher
 
             return name;
         }
+
+        private async void RefreshLibrary_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // DELETE CACHE
+                if (File.Exists(cacheFile))
+                    File.Delete(cacheFile);
+
+                // OPTIONAL: clear current list immediately
+                allGames.Clear();
+                GameList.ItemsSource = null;
+
+                // RELOAD EVERYTHING
+                await Task.Run(async () =>
+                {
+                    allGames = await LoadAllGames();
+                });
+
+                // SAVE NEW CACHE
+                string json =
+                    JsonConvert.SerializeObject(allGames, Formatting.Indented);
+
+                File.WriteAllText(cacheFile, json);
+
+                // REBIND UI
+                gameView = CollectionViewSource.GetDefaultView(allGames);
+                gameView.Filter = GameFilter;
+                GameList.ItemsSource = gameView;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Refresh failed: " + ex.Message);
+            }
+        }
+
         // PLAY BUTTON
         private void PlayGame_Click(object sender, RoutedEventArgs e)
         {
