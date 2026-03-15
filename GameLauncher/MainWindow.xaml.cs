@@ -12,7 +12,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-
 namespace GameLauncher
 {
     public partial class MainWindow : Window
@@ -21,6 +20,9 @@ namespace GameLauncher
         private static readonly HttpClient httpClient = new HttpClient();
         private List<Game> allGames = new List<Game>();
         private ICollectionView gameView;
+
+        private readonly string coverFolder = Path.Combine(Directory.GetCurrentDirectory(), "Covers");
+
         public MainWindow()
         {
             InitializeComponent();
@@ -57,7 +59,6 @@ namespace GameLauncher
             GameList.ItemsSource = gameView;
         }
 
-
         private bool GameFilter(object item)
         {
             var game = item as Game;
@@ -79,30 +80,23 @@ namespace GameLauncher
 
                 if (filter != "All")
                 {
-                    if (game.ExecutablePath
-                        .IndexOf(filter, System.StringComparison.OrdinalIgnoreCase) < 0)
+                    if (!string.Equals(game.Launcher, filter, StringComparison.OrdinalIgnoreCase))
                         return false;
-
                 }
             }
 
             return true;
         }
 
-        private void SearchBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             gameView?.Refresh();
         }
 
-        private void FilterBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void FilterBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             gameView?.Refresh();
         }
-
-
-
-        private readonly string coverFolder = Path.Combine(Directory.GetCurrentDirectory(), "Covers");
-
 
         private async Task<List<Game>> LoadAllGames()
         {
@@ -112,7 +106,7 @@ namespace GameLauncher
             foreach (var library in GetSteamLibraries())
             {
                 if (Directory.Exists(library))
-                    games.AddRange(ScanGames(library));
+                    games.AddRange(ScanGames(library, "Steam"));
             }
 
             // Epic
@@ -120,15 +114,15 @@ namespace GameLauncher
 
             // Riot
             if (Directory.Exists(@"C:\Riot Games"))
-                games.AddRange(ScanGames(@"C:\Riot Games"));
+                games.AddRange(ScanGames(@"C:\Riot Games", "Riot"));
 
             // Blizzard
             if (Directory.Exists(@"C:\Program Files (x86)\Battle.net"))
-                games.AddRange(ScanGames(@"C:\Program Files (x86)\Battle.net"));
+                games.AddRange(ScanGames(@"C:\Program Files (x86)\Battle.net", "Blizzard"));
 
             // Xbox Game Pass
             if (Directory.Exists(@"C:\XboxGames"))
-                games.AddRange(ScanGames(@"C:\XboxGames"));
+                games.AddRange(ScanGames(@"C:\XboxGames", "Xbox"));
 
             // Add cover art
             await AddCoverArt(games);
@@ -140,12 +134,10 @@ namespace GameLauncher
                 .ToList();
 
             return games;
-
         }
 
         // GENERIC FOLDER SCANNER
-
-        private List<Game> ScanGames(string folder)
+        private List<Game> ScanGames(string folder, string launcher)
         {
             List<Game> games = new List<Game>();
 
@@ -159,15 +151,16 @@ namespace GameLauncher
                     {
                         Name = Path.GetFileName(dir),
                         ExecutablePath = exes[0],
-                        ImagePath = "placeholder.png"
+                        ImagePath = "placeholder.png",
+                        Launcher = launcher
                     });
                 }
             }
 
             return games;
         }
-        // STEAM LIBRARIES
 
+        // STEAM LIBRARIES
         private List<string> GetSteamLibraries()
         {
             List<string> libraries = new List<string>();
@@ -190,9 +183,7 @@ namespace GameLauncher
             return libraries;
         }
 
-
         // EPIC MANIFEST SCANNER
-
         private List<Game> ScanEpicManifests()
         {
             List<Game> games = new List<Game>();
@@ -216,15 +207,16 @@ namespace GameLauncher
                     {
                         Name = name,
                         ExecutablePath = FindExe(install),
-                        ImagePath = "placeholder.png"
+                        ImagePath = "placeholder.png",
+                        Launcher = "Epic"
                     });
                 }
             }
 
             return games;
         }
-        // COVER ART SYSTEM
 
+        // COVER ART SYSTEM
         private async Task AddCoverArt(List<Game> games)
         {
             var tasks = games.Select(async game =>
@@ -234,7 +226,6 @@ namespace GameLauncher
 
             await Task.WhenAll(tasks);
         }
-
 
         private async Task<string> DownloadCover(string gameName)
         {
@@ -246,26 +237,44 @@ namespace GameLauncher
                     return "placeholder.png";
 
                 string url =
-                    $"https://api.rawg.io/api/games?key={apiKey}&search={gameName}";
+                    $"https://api.rawg.io/api/games?key={apiKey}&search={gameName}&page_size=1";
 
-                using (HttpClient client = new HttpClient())
+                var response = await httpClient.GetStringAsync(url);
+
+                JObject json = JObject.Parse(response);
+
+                var result = json["results"]?[0];
+
+                if (result == null)
+                    return "placeholder.png";
+
+                string image = result["background_image"]?.ToString();
+
+                string genre =
+                    result["genres"]?[0]?["name"]?.ToString();
+
+                string released =
+                    result["released"]?.ToString();
+
+                double rating =
+                    result["rating"]?.ToObject<double>() ?? 0;
+
+                var game = allGames.FirstOrDefault(g => g.Name == gameName);
+
+                if (game != null)
                 {
-                    var response = await httpClient.GetStringAsync(url);
-
-                    JObject json = JObject.Parse(response);
-
-                    var image =
-                        json["results"]?[0]?["background_image"]?.ToString();
-
-                    return image ?? "placeholder.png";
+                    game.Genre = genre;
+                    game.ReleaseDate = released;
+                    game.Rating = rating;
                 }
+
+                return image ?? "placeholder.png";
             }
             catch
             {
                 return "placeholder.png";
             }
         }
-
 
         // HELPER FUNCTIONS
         private string ExtractValue(string text, string key)
@@ -309,25 +318,22 @@ namespace GameLauncher
                 if (File.Exists(cacheFile))
                     File.Delete(cacheFile);
 
-                // OPTIONAL: clear current list immediately
                 allGames.Clear();
                 GameList.ItemsSource = null;
 
-                // RELOAD EVERYTHING
                 await Task.Run(async () =>
                 {
                     allGames = await LoadAllGames();
                 });
 
-                // SAVE NEW CACHE
                 string json =
                     JsonConvert.SerializeObject(allGames, Formatting.Indented);
 
                 File.WriteAllText(cacheFile, json);
 
-                // REBIND UI
                 gameView = CollectionViewSource.GetDefaultView(allGames);
                 gameView.Filter = GameFilter;
+
                 GameList.ItemsSource = gameView;
             }
             catch (Exception ex)
@@ -336,10 +342,41 @@ namespace GameLauncher
             }
         }
 
+        private void SortBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (gameView == null)
+                return;
+
+            gameView.SortDescriptions.Clear();
+
+            switch (SortBox.SelectedIndex)
+            {
+                case 0:
+                    gameView.SortDescriptions.Add(
+                        new SortDescription("Name", ListSortDirection.Ascending));
+                    break;
+
+                case 1:
+                    gameView.SortDescriptions.Add(
+                        new SortDescription("Name", ListSortDirection.Descending));
+                    break;
+
+                case 2:
+                    gameView.SortDescriptions.Add(
+                        new SortDescription("Rating", ListSortDirection.Descending));
+                    break;
+
+                case 3:
+                    gameView.SortDescriptions.Add(
+                        new SortDescription("ReleaseDate", ListSortDirection.Descending));
+                    break;
+            }
+        }
+
         // PLAY BUTTON
         private void PlayGame_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as System.Windows.Controls.Button;
+            var button = sender as Button;
             string exePath = button.Tag.ToString();
 
             Process.Start(exePath);
