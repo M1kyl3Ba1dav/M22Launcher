@@ -4,46 +4,61 @@
         Title="Game Launcher"
         Height="700"
         Width="1100"
-        Background="#101010">
+        WindowStartupLocation="CenterScreen"
+        Background="#0D0B1F">
 
+    <!-- MAIN LAYOUT -->
     <Grid>
 
+        <!-- 🌌 PURPLE GRADIENT BACKGROUND -->
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#0f0f0f" Offset="0"/>
-                <GradientStop Color="#1a1a1a" Offset="0.4"/>
-                <GradientStop Color="#202020" Offset="0.7"/>
-                <GradientStop Color="#151515" Offset="1"/>
+                <GradientStop Color="#120A2A" Offset="0"/>
+                <GradientStop Color="#1E144A" Offset="0.5"/>
+                <GradientStop Color="#2C1F6B" Offset="1"/>
             </LinearGradientBrush>
         </Grid.Background>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="70"/>
+            <RowDefinition Height="75"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- TOP BAR -->
-        <Border Background="#1f1f1f"
-                Grid.Row="0"
+        <!-- ================= TOP BAR ================= -->
+        <Border Grid.Row="0"
+                Margin="12,12,12,0"
                 Padding="10"
-                Opacity="0.95">
+                CornerRadius="18">
 
+            <!-- GLASS EFFECT -->
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#55FFFFFF" Offset="0"/>
+                    <GradientStop Color="#22FFFFFF" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="18"
+                                  ShadowDepth="0"
+                                  Opacity="0.35"/>
+            </Border.Effect>
+
+            <!-- TOP GRID -->
             <Grid>
-                
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="170"/>
                     <ColumnDefinition Width="170"/>
-                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="140"/>
                 </Grid.ColumnDefinitions>
-
 
                 <!-- SEARCH -->
                 <TextBox x:Name="SearchBox"
                          Height="40"
                          Margin="5"
-                         Background="#2d2d2d"
+                         Background="#33FFFFFF"
                          Foreground="White"
                          BorderThickness="0"
                          Padding="10"
@@ -56,8 +71,8 @@
                           Grid.Column="1"
                           Height="40"
                           Margin="5"
-                          Background="#2d2d2d"
-                          Foreground="White"
+                          Background="#33FFFFFF"
+                          Foreground="Black"
                           BorderThickness="0"
                           SelectionChanged="FilterBox_SelectionChanged">
 
@@ -75,8 +90,8 @@
                           Grid.Column="2"
                           Height="40"
                           Margin="5"
-                          Background="#2d2d2d"
-                          Foreground="White"
+                          Background="#33FFFFFF"
+                          Foreground="Black"
                           BorderThickness="0"
                           SelectionChanged="SortBox_SelectionChanged">
 
@@ -92,10 +107,10 @@
                         Content="Refresh"
                         Height="40"
                         Margin="5"
-                        Background="#4CAF50"
+                        Background="#7C5CFF"
                         Foreground="White"
                         BorderThickness="0"
-                        FontWeight="Bold"
+                        FontWeight="SemiBold"
                         Cursor="Hand"
                         Click="RefreshLibrary_Click"/>
 
@@ -103,7 +118,7 @@
 
         </Border>
 
-        <!-- GAME GRID -->
+        <!-- ================= GAME GRID ================= -->
         <ScrollViewer Grid.Row="1"
                       VerticalScrollBarVisibility="Auto">
 
@@ -111,7 +126,7 @@
 
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Margin="10"/>
+                        <WrapPanel Margin="15"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
@@ -119,12 +134,25 @@
 
                     <DataTemplate>
 
-                        <Border Width="210"
-                                Height="300"
+                        <Border Width="220"
+                                Height="310"
                                 Margin="12"
-                                CornerRadius="12"
-                                Background="#202020"
+                                CornerRadius="16"
                                 Cursor="Hand">
+
+                            <!-- GLASS CARD -->
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#33FFFFFF" Offset="0"/>
+                                    <GradientStop Color="#11FFFFFF" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="15"
+                                                  ShadowDepth="4"
+                                                  Opacity="0.4"/>
+                            </Border.Effect>
 
                             <Border.RenderTransform>
                                 <ScaleTransform x:Name="scale"
@@ -134,22 +162,18 @@
 
                             <Border.Triggers>
 
+                                <!-- HOVER ANIMATION -->
                                 <EventTrigger RoutedEvent="MouseEnter">
                                     <BeginStoryboard>
                                         <Storyboard>
-
-                                            <DoubleAnimation
-                                                Storyboard.TargetName="scale"
-                                                Storyboard.TargetProperty="ScaleX"
-                                                To="1.06"
-                                                Duration="0:0:0.15"/>
-
-                                            <DoubleAnimation
-                                                Storyboard.TargetName="scale"
-                                                Storyboard.TargetProperty="ScaleY"
-                                                To="1.06"
-                                                Duration="0:0:0.15"/>
-
+                                            <DoubleAnimation Storyboard.TargetName="scale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="1.06"
+                                                             Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="scale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="1.06"
+                                                             Duration="0:0:0.15"/>
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </EventTrigger>
@@ -157,25 +181,21 @@
                                 <EventTrigger RoutedEvent="MouseLeave">
                                     <BeginStoryboard>
                                         <Storyboard>
-
-                                            <DoubleAnimation
-                                                Storyboard.TargetName="scale"
-                                                Storyboard.TargetProperty="ScaleX"
-                                                To="1"
-                                                Duration="0:0:0.15"/>
-
-                                            <DoubleAnimation
-                                                Storyboard.TargetName="scale"
-                                                Storyboard.TargetProperty="ScaleY"
-                                                To="1"
-                                                Duration="0:0:0.15"/>
-
+                                            <DoubleAnimation Storyboard.TargetName="scale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="1"
+                                                             Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="scale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="1"
+                                                             Duration="0:0:0.15"/>
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </EventTrigger>
 
                             </Border.Triggers>
 
+                            <!-- CARD CONTENT -->
                             <StackPanel>
 
                                 <!-- COVER -->
@@ -194,13 +214,13 @@
 
                                 <!-- GENRE -->
                                 <TextBlock Text="{Binding Genre}"
-                                           Foreground="#aaaaaa"
+                                           Foreground="#CCCCCC"
                                            FontSize="12"
                                            HorizontalAlignment="Center"/>
 
                                 <!-- RELEASE -->
                                 <TextBlock Text="{Binding ReleaseDate}"
-                                           Foreground="#888"
+                                           Foreground="#AAAAAA"
                                            FontSize="11"
                                            HorizontalAlignment="Center"/>
 
@@ -210,12 +230,12 @@
                                            FontSize="12"
                                            HorizontalAlignment="Center"/>
 
-                                <!-- PLAY -->
+                                <!-- PLAY BUTTON -->
                                 <Button Content="Play"
                                         Tag="{Binding ExecutablePath}"
-                                        Margin="10,6"
-                                        Height="32"
-                                        Background="#3f51b5"
+                                        Margin="10,8"
+                                        Height="34"
+                                        Background="#7C5CFF"
                                         Foreground="White"
                                         BorderThickness="0"
                                         Cursor="Hand"
