@@ -7,10 +7,9 @@
         WindowStartupLocation="CenterScreen"
         Background="#0D0B1F">
 
-    <!-- MAIN LAYOUT -->
     <Grid>
 
-        <!-- 🌌 PURPLE GRADIENT BACKGROUND -->
+        <!-- 🌌 PURPLE BACKGROUND -->
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#120A2A" Offset="0"/>
@@ -30,7 +29,6 @@
                 Padding="10"
                 CornerRadius="18">
 
-            <!-- GLASS EFFECT -->
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                     <GradientStop Color="#55FFFFFF" Offset="0"/>
@@ -44,7 +42,6 @@
                                   Opacity="0.35"/>
             </Border.Effect>
 
-            <!-- TOP GRID -->
             <Grid>
 
                 <Grid.ColumnDefinitions>
@@ -62,7 +59,6 @@
                          Foreground="White"
                          BorderThickness="0"
                          Padding="10"
-                         FontSize="14"
                          VerticalContentAlignment="Center"
                          TextChanged="SearchBox_TextChanged"/>
 
@@ -122,16 +118,23 @@
         <ScrollViewer Grid.Row="1"
                       VerticalScrollBarVisibility="Auto">
 
-            <ItemsControl x:Name="GameList">
+            <ListBox x:Name="GameList"
+                     SelectionMode="Single"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     KeyboardNavigation.TabNavigation="Continue"
+                     KeyboardNavigation.DirectionalNavigation="Contained">
 
-                <ItemsControl.ItemsPanel>
+                <!-- WRAP LAYOUT -->
+                <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Margin="15"/>
+                        <UniformGrid IsItemsHost="True"/>
                     </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+                </ListBox.ItemsPanel>
 
-                <ItemsControl.ItemTemplate>
-
+                <!-- CARD TEMPLATE -->
+                <ListBox.ItemTemplate>
                     <DataTemplate>
 
                         <Border Width="220"
@@ -140,7 +143,6 @@
                                 CornerRadius="16"
                                 Cursor="Hand">
 
-                            <!-- GLASS CARD -->
                             <Border.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                     <GradientStop Color="#33FFFFFF" Offset="0"/>
@@ -154,56 +156,12 @@
                                                   Opacity="0.4"/>
                             </Border.Effect>
 
-                            <Border.RenderTransform>
-                                <ScaleTransform x:Name="scale"
-                                                ScaleX="1"
-                                                ScaleY="1"/>
-                            </Border.RenderTransform>
-
-                            <Border.Triggers>
-
-                                <!-- HOVER ANIMATION -->
-                                <EventTrigger RoutedEvent="MouseEnter">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="scale"
-                                                             Storyboard.TargetProperty="ScaleX"
-                                                             To="1.06"
-                                                             Duration="0:0:0.15"/>
-                                            <DoubleAnimation Storyboard.TargetName="scale"
-                                                             Storyboard.TargetProperty="ScaleY"
-                                                             To="1.06"
-                                                             Duration="0:0:0.15"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-
-                                <EventTrigger RoutedEvent="MouseLeave">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="scale"
-                                                             Storyboard.TargetProperty="ScaleX"
-                                                             To="1"
-                                                             Duration="0:0:0.15"/>
-                                            <DoubleAnimation Storyboard.TargetName="scale"
-                                                             Storyboard.TargetProperty="ScaleY"
-                                                             To="1"
-                                                             Duration="0:0:0.15"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-
-                            </Border.Triggers>
-
-                            <!-- CARD CONTENT -->
                             <StackPanel>
 
-                                <!-- COVER -->
                                 <Image Source="{Binding ImagePath}"
                                        Height="150"
                                        Stretch="Fill"/>
 
-                                <!-- NAME -->
                                 <TextBlock Text="{Binding Name}"
                                            Foreground="White"
                                            FontSize="15"
@@ -212,25 +170,21 @@
                                            TextAlignment="Center"
                                            TextWrapping="Wrap"/>
 
-                                <!-- GENRE -->
                                 <TextBlock Text="{Binding Genre}"
                                            Foreground="#CCCCCC"
                                            FontSize="12"
                                            HorizontalAlignment="Center"/>
 
-                                <!-- RELEASE -->
                                 <TextBlock Text="{Binding ReleaseDate}"
                                            Foreground="#AAAAAA"
                                            FontSize="11"
                                            HorizontalAlignment="Center"/>
 
-                                <!-- RATING -->
                                 <TextBlock Text="{Binding Rating}"
                                            Foreground="#FFD700"
                                            FontSize="12"
                                            HorizontalAlignment="Center"/>
 
-                                <!-- PLAY BUTTON -->
                                 <Button Content="Play"
                                         Tag="{Binding ExecutablePath}"
                                         Margin="10,8"
@@ -246,10 +200,9 @@
                         </Border>
 
                     </DataTemplate>
+                </ListBox.ItemTemplate>
 
-                </ItemsControl.ItemTemplate>
-
-            </ItemsControl>
+            </ListBox>
 
         </ScrollViewer>
 

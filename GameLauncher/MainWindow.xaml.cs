@@ -20,6 +20,8 @@ namespace GameLauncher
         private static readonly HttpClient httpClient = new HttpClient();
         private List<Game> allGames = new List<Game>();
         private ICollectionView gameView;
+        private ControllerManager controller;
+        private int selectedIndex = 0;
 
         private readonly string coverFolder = Path.Combine(Directory.GetCurrentDirectory(), "Covers");
 
@@ -27,14 +29,25 @@ namespace GameLauncher
         {
             InitializeComponent();
 
+            controller = new ControllerManager();
+
+            controller.OnUp += MoveUp;
+            controller.OnDown += MoveDown;
+            controller.OnSelect += SelectGame;
+
+            controller.Start();
+
+
             if (!Directory.Exists(coverFolder))
                 Directory.CreateDirectory(coverFolder);
 
-            LoadGames();
+            _ = LoadGames();
+
+            GameList.Focus();
         }
 
         // LOAD ALL GAMES
-        private async void LoadGames()
+        private async Task LoadGames()
         {
             Trace.WriteLine("Loading games...");
 
@@ -314,21 +327,15 @@ namespace GameLauncher
         {
             try
             {
-                // DELETE CACHE
                 if (File.Exists(cacheFile))
                     File.Delete(cacheFile);
 
                 allGames.Clear();
                 GameList.ItemsSource = null;
 
-                await Task.Run(async () =>
-                {
-                    allGames = await LoadAllGames();
-                });
+                allGames = await LoadAllGames();
 
-                string json =
-                    JsonConvert.SerializeObject(allGames, Formatting.Indented);
-
+                string json = JsonConvert.SerializeObject(allGames, Formatting.Indented);
                 File.WriteAllText(cacheFile, json);
 
                 gameView = CollectionViewSource.GetDefaultView(allGames);
@@ -341,6 +348,7 @@ namespace GameLauncher
                 MessageBox.Show("Refresh failed: " + ex.Message);
             }
         }
+
 
         private void SortBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -381,5 +389,48 @@ namespace GameLauncher
 
             Process.Start(exePath);
         }
+
+        //CONTROLLER METHODS
+        private void MoveUp()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (GameList.Items.Count == 0) return;
+
+                selectedIndex--;
+                if (selectedIndex < 0)
+                    selectedIndex = GameList.Items.Count - 1;
+
+                GameList.SelectedIndex = selectedIndex;
+                GameList.ScrollIntoView(GameList.SelectedItem);
+            });
+        }
+
+        private void MoveDown()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (GameList.Items.Count == 0) return;
+
+                selectedIndex++;
+                if (selectedIndex >= GameList.Items.Count)
+                    selectedIndex = 0;
+
+                GameList.SelectedIndex = selectedIndex;
+                GameList.ScrollIntoView(GameList.SelectedItem);
+            });
+        }
+
+        private void SelectGame()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (GameList.SelectedItem is Game game)
+                {
+                    Process.Start(game.ExecutablePath);
+                }
+            });
+        }
+
     }
 }
