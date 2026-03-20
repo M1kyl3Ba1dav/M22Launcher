@@ -2,108 +2,84 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Game Launcher"
-        Height="700"
-        Width="1100"
+        Height="720"
+        Width="1200"
         WindowStartupLocation="CenterScreen"
-        Background="#0D0B1F">
+        Background="#0B0F1A">
 
     <Grid>
 
-        <!-- 🌌 PURPLE BACKGROUND -->
+        <!-- 🔷 CLEAN DARK BACKGROUND -->
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#120A2A" Offset="0"/>
-                <GradientStop Color="#1E144A" Offset="0.5"/>
-                <GradientStop Color="#2C1F6B" Offset="1"/>
+                <GradientStop Color="#0B0F1A" Offset="0"/>
+                <GradientStop Color="#111827" Offset="0.5"/>
+                <GradientStop Color="#1F2937" Offset="1"/>
             </LinearGradientBrush>
         </Grid.Background>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="75"/>
+            <RowDefinition Height="80"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- ================= TOP BAR ================= -->
+        <!-- ================= HEADER ================= -->
         <Border Grid.Row="0"
-                Margin="12,12,12,0"
-                Padding="10"
-                CornerRadius="18">
+                Margin="16,16,16,0"
+                CornerRadius="14"
+                Background="#121826">
 
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#55FFFFFF" Offset="0"/>
-                    <GradientStop Color="#22FFFFFF" Offset="1"/>
-                </LinearGradientBrush>
-            </Border.Background>
-
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="18"
-                                  ShadowDepth="0"
-                                  Opacity="0.35"/>
-            </Border.Effect>
-
-            <Grid>
-
+            <Grid Margin="10">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="220"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="170"/>
-                    <ColumnDefinition Width="170"/>
-                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="120"/>
                 </Grid.ColumnDefinitions>
+
+                <!-- LOGO / TITLE -->
+                <TextBlock Text="🎮 Game Launcher"
+                           VerticalAlignment="Center"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Foreground="White"/>
 
                 <!-- SEARCH -->
                 <TextBox x:Name="SearchBox"
+                         Grid.Column="1"
                          Height="40"
-                         Margin="5"
-                         Background="#33FFFFFF"
+                         Margin="10,0"
+                         Background="#1F2937"
                          Foreground="White"
                          BorderThickness="0"
-                         Padding="10"
+                         Padding="12"
                          VerticalContentAlignment="Center"
+                         FontSize="14"
+                         Text="Search games..."
                          TextChanged="SearchBox_TextChanged"/>
-
-                <!-- FILTER -->
-                <ComboBox x:Name="FilterBox"
-                          Grid.Column="1"
-                          Height="40"
-                          Margin="5"
-                          Background="#33FFFFFF"
-                          Foreground="Black"
-                          BorderThickness="0"
-                          SelectionChanged="FilterBox_SelectionChanged">
-
-                    <ComboBoxItem Content="All" IsSelected="True"/>
-                    <ComboBoxItem Content="Steam"/>
-                    <ComboBoxItem Content="Epic"/>
-                    <ComboBoxItem Content="Riot"/>
-                    <ComboBoxItem Content="Blizzard"/>
-                    <ComboBoxItem Content="Xbox"/>
-
-                </ComboBox>
 
                 <!-- SORT -->
                 <ComboBox x:Name="SortBox"
                           Grid.Column="2"
                           Height="40"
-                          Margin="5"
-                          Background="#33FFFFFF"
-                          Foreground="Black"
+                          Margin="10,6,6,-2"
+                          Background="#1F2937"
+                          Foreground="black"
                           BorderThickness="0"
-                          SelectionChanged="SortBox_SelectionChanged">
-
+                          SelectionChanged="SortBox_SelectionChanged" Grid.ColumnSpan="2">
                     <ComboBoxItem Content="A-Z" IsSelected="True"/>
                     <ComboBoxItem Content="Z-A"/>
                     <ComboBoxItem Content="Rating"/>
                     <ComboBoxItem Content="Release Date"/>
-
                 </ComboBox>
 
-                <!-- REFRESH -->
-                <Button Grid.Column="3"
+                <!-- REFRESH BUTTON -->
+                <Button Grid.Column="4"
                         Content="Refresh"
                         Height="40"
-                        Margin="5"
-                        Background="#7C5CFF"
+                        Margin="6"
+                        Background="#6366F1"
                         Foreground="White"
                         BorderThickness="0"
                         FontWeight="SemiBold"
@@ -111,25 +87,19 @@
                         Click="RefreshLibrary_Click"/>
 
             </Grid>
-
         </Border>
 
         <!-- ================= GAME GRID ================= -->
-        <ScrollViewer Grid.Row="1"
-                      VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
 
             <ListBox x:Name="GameList"
-                     SelectionMode="Single"
                      Background="Transparent"
                      BorderThickness="0"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     KeyboardNavigation.TabNavigation="Continue"
-                     KeyboardNavigation.DirectionalNavigation="Contained">
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 
-                <!-- WRAP LAYOUT -->
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid IsItemsHost="True"/>
+                        <WrapPanel/>
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
 
@@ -137,65 +107,129 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
 
-                        <Border Width="220"
-                                Height="310"
-                                Margin="12"
-                                CornerRadius="16"
-                                Cursor="Hand">
+                        <Border Width="240"
+        Height="330"
+        Margin="12"
+        CornerRadius="12"
+        Background="#111827"
+        RenderTransformOrigin="0.5,0.5">
 
-                            <Border.Background>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                    <GradientStop Color="#33FFFFFF" Offset="0"/>
-                                    <GradientStop Color="#11FFFFFF" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Border.Background>
+                            <Border.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            </Border.RenderTransform>
 
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="15"
-                                                  ShadowDepth="4"
-                                                  Opacity="0.4"/>
-                            </Border.Effect>
+                            <Border.Style>
+                                <Style TargetType="Border">
 
-                            <StackPanel>
+                                    <Setter Property="RenderTransform">
+                                        <Setter.Value>
+                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                        </Setter.Value>
+                                    </Setter>
 
+                                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect BlurRadius="12"
+                                  ShadowDepth="3"
+                                  Opacity="0.25"/>
+                                        </Setter.Value>
+                                    </Setter>
+
+                                    <Style.Triggers>
+
+                                        <Trigger Property="IsMouseOver" Value="True">
+
+                                            <Trigger.EnterActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+
+                                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                             To="1.05"
+                                             Duration="0:0:0.12"/>
+
+                                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                             To="1.05"
+                                             Duration="0:0:0.12"/>
+
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.EnterActions>
+
+                                            <Trigger.ExitActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+
+                                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                             To="1"
+                                             Duration="0:0:0.12"/>
+
+                                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                             To="1"
+                                             Duration="0:0:0.12"/>
+
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.ExitActions>
+
+                                            <Setter Property="Effect">
+                                                <Setter.Value>
+                                                    <DropShadowEffect BlurRadius="25"
+                                          ShadowDepth="8"
+                                          Opacity="0.4"/>
+                                                </Setter.Value>
+                                            </Setter>
+
+                                        </Trigger>
+
+                                    </Style.Triggers>
+
+                                </Style>
+                            </Border.Style>
+                            
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="150"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="50"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- IMAGE -->
                                 <Image Source="{Binding ImagePath}"
-                                       Height="150"
                                        Stretch="Fill"/>
 
-                                <TextBlock Text="{Binding Name}"
-                                           Foreground="White"
-                                           FontSize="15"
-                                           FontWeight="SemiBold"
-                                           Margin="8"
-                                           TextAlignment="Center"
-                                           TextWrapping="Wrap"/>
+                                <!-- INFO -->
+                                <StackPanel Grid.Row="1" Margin="10">
+                                    <TextBlock Text="{Binding Name}"
+                                               Foreground="White"
+                                               FontSize="14"
+                                               FontWeight="Bold"
+                                               TextWrapping="Wrap"/>
 
-                                <TextBlock Text="{Binding Genre}"
-                                           Foreground="#CCCCCC"
-                                           FontSize="12"
-                                           HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Genre}"
+                                               Foreground="#9CA3AF"
+                                               FontSize="12"/>
 
-                                <TextBlock Text="{Binding ReleaseDate}"
-                                           Foreground="#AAAAAA"
-                                           FontSize="11"
-                                           HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ReleaseDate}"
+                                               Foreground="#6B7280"
+                                               FontSize="11"/>
 
-                                <TextBlock Text="{Binding Rating}"
-                                           Foreground="#FFD700"
-                                           FontSize="12"
-                                           HorizontalAlignment="Center"/>
+                                    
+                                </StackPanel>
 
-                                <Button Content="Play"
-                                        Tag="{Binding ExecutablePath}"
-                                        Margin="10,8"
-                                        Height="34"
-                                        Background="#7C5CFF"
+                                <!-- PLAY BUTTON -->
+                                <Button Grid.Row="2"
+                                        Content="Play"
+                                        Margin="10"
+                                        Background="#4F46E5"
                                         Foreground="White"
                                         BorderThickness="0"
                                         Cursor="Hand"
+                                        Tag="{Binding ExecutablePath}"
                                         Click="PlayGame_Click"/>
 
-                            </StackPanel>
+                            </Grid>
 
                         </Border>
 

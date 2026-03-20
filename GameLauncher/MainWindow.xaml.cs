@@ -29,6 +29,15 @@ namespace GameLauncher
         {
             InitializeComponent();
 
+
+
+
+            Loaded += async (s, e) =>
+            {
+                await LoadGames();
+                GameList.Focus();
+            };
+
             controller = new ControllerManager();
 
             controller.OnUp += MoveUp;
@@ -37,14 +46,10 @@ namespace GameLauncher
 
             controller.Start();
 
-
             if (!Directory.Exists(coverFolder))
                 Directory.CreateDirectory(coverFolder);
-
-            _ = LoadGames();
-
-            GameList.Focus();
         }
+
 
         // LOAD ALL GAMES
         private async Task LoadGames()
@@ -67,49 +72,28 @@ namespace GameLauncher
             }
 
             gameView = CollectionViewSource.GetDefaultView(allGames);
-            gameView.Filter = GameFilter;
 
             GameList.ItemsSource = gameView;
         }
 
-        private bool GameFilter(object item)
-        {
-            var game = item as Game;
 
-            if (game == null)
-                return false;
 
-            // SEARCH FILTER
-            if (!string.IsNullOrWhiteSpace(SearchBox.Text))
-            {
-                if (!game.Name.ToLower().Contains(SearchBox.Text.ToLower()))
-                    return false;
-            }
 
-            // LAUNCHER FILTER
-            if (FilterBox.SelectedItem is ComboBoxItem selected)
-            {
-                string filter = selected.Content.ToString();
 
-                if (filter != "All")
-                {
-                    if (!string.Equals(game.Launcher, filter, StringComparison.OrdinalIgnoreCase))
-                        return false;
-                }
-            }
 
-            return true;
-        }
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            selectedIndex = 0;
             gameView?.Refresh();
         }
 
         private void FilterBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            selectedIndex = 0;
             gameView?.Refresh();
         }
+
 
         private async Task<List<Game>> LoadAllGames()
         {
@@ -269,10 +253,21 @@ namespace GameLauncher
                 string released =
                     result["released"]?.ToString();
 
-                double rating =
-                    result["rating"]?.ToObject<double>() ?? 0;
+                float rating = 0f;
 
-                var game = allGames.FirstOrDefault(g => g.Name == gameName);
+                var ratingToken = result?["rating"];
+
+                if (ratingToken != null)
+                {
+                    float.TryParse(ratingToken.ToString(), out rating);
+                }
+
+
+                string apiName = result?["name"]?.ToString();
+
+                var game = allGames.FirstOrDefault(g =>
+                    string.Equals(g.Name?.Trim(), apiName?.Trim(), StringComparison.OrdinalIgnoreCase));
+
 
                 if (game != null)
                 {
@@ -287,6 +282,9 @@ namespace GameLauncher
             {
                 return "placeholder.png";
             }
+
+
+
         }
 
         // HELPER FUNCTIONS
@@ -339,7 +337,6 @@ namespace GameLauncher
                 File.WriteAllText(cacheFile, json);
 
                 gameView = CollectionViewSource.GetDefaultView(allGames);
-                gameView.Filter = GameFilter;
 
                 GameList.ItemsSource = gameView;
             }
@@ -410,16 +407,24 @@ namespace GameLauncher
         {
             Dispatcher.Invoke(() =>
             {
-                if (GameList.Items.Count == 0) return;
+                int count = GameList.Items.Count;
+                if (count == 0) return;
+
+                if (selectedIndex >= count)
+                    selectedIndex = 0;
 
                 selectedIndex++;
-                if (selectedIndex >= GameList.Items.Count)
+
+                if (selectedIndex >= count)
                     selectedIndex = 0;
 
                 GameList.SelectedIndex = selectedIndex;
-                GameList.ScrollIntoView(GameList.SelectedItem);
+
+                if (GameList.SelectedItem != null)
+                    GameList.ScrollIntoView(GameList.SelectedItem);
             });
         }
+
 
         private void SelectGame()
         {
