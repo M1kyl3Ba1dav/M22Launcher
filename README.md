@@ -4,6 +4,24 @@ A lightweight, controller-compatible Windows game launcher built with WPF (.NET)
 
 ---
 
+## Why I Built This
+
+All software should solve a real problem - otherwise it’s just unnecessary complexity.
+
+In my case, the problem was simple: my games were scattered across multiple launchers like Steam, Epic Games, Riot, Blizzard, and Xbox Game Pass. Every time I wanted to play something, I had to open a different launcher, wait for it to load, and deal with multiple apps cluttering my taskbar.
+
+Keeping several launchers open at once felt inefficient and messy, especially for something that should be quick and seamless.
+
+So I built this launcher to:
+
+Centralise all my games in one place
+Reduce the need to juggle multiple launchers
+Make launching a game fast, simple, and controller-friendly
+
+It’s not trying to replace those platforms - it just sits on top of them and removes the friction of switching between them.
+
+---
+
 ## Features
 
 - **Multi-platform detection** — scans Steam, Epic, Riot, Blizzard, and Xbox Game Pass libraries automatically
