@@ -1,6 +1,6 @@
 # 🎮 Game Launcher
 
-A lightweight, controller-compatible Windows game launcher built with WPF (.NET). Automatically detects installed games across Steam, Epic Games, Riot, Blizzard, and Xbox Game Pass — then pulls cover art, ratings, and metadata from the RAWG API.
+A lightweight, controller-compatible Windows game launcher built with WPF (.NET). Automatically detects installed games across Steam, Epic Games, Riot, Blizzard, and Xbox Game Pass - then pulls cover art, ratings, and metadata from the RAWG API.
 
 ---
 
@@ -24,12 +24,12 @@ It’s not trying to replace those platforms - it just sits on top of them and r
 
 ## Features
 
-- **Multi-platform detection** — scans Steam, Epic, Riot, Blizzard, and Xbox Game Pass libraries automatically
-- **Cover art & metadata** — fetches game covers, genres, release dates, and ratings via the RAWG API
-- **Search & sort** — filter by name and sort A–Z, Z–A, by rating, or by release date
-- **Controller support** — navigate and launch games with an Xbox controller (XInput)
-- **Local caching** — saves game data to `games.json` so subsequent launches are instant
-- **Refresh** — clears the cache and re-scans your libraries on demand
+- **Multi-platform detection** - scans Steam, Epic, Riot, Blizzard, and Xbox Game Pass libraries automatically
+- **Cover art & metadata** - fetches game covers, genres, release dates, and ratings via the RAWG API
+- **Search & sort** - filter by name and sort A–Z, Z–A, by rating, or by release date
+- **Controller support** - navigate and launch games with an Xbox controller (XInput)
+- **Local caching** - saves game data to `games.json` so subsequent launches are instant
+- **Refresh** - clears the cache and re-scans your libraries on demand
 
 ---
 
@@ -144,10 +144,10 @@ The `ControllerManager` class polls XInput at 200ms intervals:
 
 ## Known Limitations
 
-- **EXE detection is best-effort** — for deeply nested installs, the first `.exe` found is used, which may not always be the correct launcher
-- **RAWG name matching** — metadata is matched by game name string comparison; names that differ between your install folder and RAWG's database (e.g. `CS2` vs `Counter-Strike 2`) may not match
-- **Epic Games** — only games with standard manifest files are detected; some titles may be missed
-- **Controller polling** — the current 200ms poll interval means holding a button will fire repeatedly; rapid navigation is intentional behavior
+- **EXE detection is best-effort** - for deeply nested installs, the first `.exe` found is used, which may not always be the correct launcher
+- **RAWG name matching** - metadata is matched by game name string comparison; names that differ between your install folder and RAWG's database (e.g. `CS2` vs `Counter-Strike 2`) may not match
+- **Epic Games** - only games with standard manifest files are detected; some titles may be missed
+- **Controller polling** - the current 200ms poll interval means holding a button will fire repeatedly; rapid navigation is intentional behavior
 
 ---
 
