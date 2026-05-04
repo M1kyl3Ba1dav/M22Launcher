@@ -1,4 +1,4 @@
-# 🎮 Game Launcher
+# M22 Game Launcher
 
 A lightweight, controller-compatible Windows game launcher built with WPF (.NET). Automatically detects installed games across Steam, Epic Games, Riot, Blizzard, and Xbox Game Pass - then pulls cover art, ratings, and metadata from the RAWG API.
 
