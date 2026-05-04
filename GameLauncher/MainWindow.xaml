@@ -5,96 +5,227 @@
         Height="720"
         Width="1200"
         WindowStartupLocation="CenterScreen"
-        Background="#0B0F1A">
+        Background="#0D1117">
 
+    <Window.Resources>
+
+        <!-- ===== PLAY BUTTON ===== -->
+        <Style x:Key="PlayButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#4F46E5"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#6366F1"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#3730A3"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ===== HEADER BUTTON (Refresh) ===== -->
+        <Style x:Key="HeaderButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#1E2433"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="BorderBrush" Value="#2D3748"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#2D3748"/>
+                                <Setter TargetName="Bg" Property="BorderBrush" Value="#4B5563"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#374151"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ===== LISTBOXITEM: kill default highlight chrome ===== -->
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <ContentPresenter/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ===== THIN SCROLLBAR ===== -->
+        <Style TargetType="ScrollBar">
+            <Setter Property="Width" Value="5"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+    </Window.Resources>
+
+    <!-- ===== ROOT ===== -->
     <Grid>
-
-        <!-- 🔷 CLEAN DARK BACKGROUND -->
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#0B0F1A" Offset="0"/>
-                <GradientStop Color="#111827" Offset="0.5"/>
-                <GradientStop Color="#1F2937" Offset="1"/>
+                <GradientStop Color="#0D1117" Offset="0"/>
+                <GradientStop Color="#111827" Offset="1"/>
             </LinearGradientBrush>
         </Grid.Background>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="72"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- ================= HEADER ================= -->
         <Border Grid.Row="0"
-                Margin="16,16,16,0"
-                CornerRadius="14"
-                Background="#121826">
+                Margin="16,12,16,0"
+                CornerRadius="12"
+                Background="#13192A">
 
-            <Grid Margin="10">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="24" ShadowDepth="2" Opacity="0.35" Color="#000000"/>
+            </Border.Effect>
+
+            <Grid Margin="16,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="220"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Logo -->
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="120"/>
+                    <!-- Search -->
+                    <ColumnDefinition Width="160"/>
+                    <!-- Sort -->
+                    <ColumnDefinition Width="110"/>
+                    <!-- Refresh -->
                 </Grid.ColumnDefinitions>
 
-                <!-- LOGO / TITLE -->
-                <TextBlock Text="🎮 Game Launcher"
-                           VerticalAlignment="Center"
-                           FontSize="20"
-                           FontWeight="Bold"
-                           Foreground="White"/>
+                <!-- LOGO -->
+                <StackPanel Grid.Column="0"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Margin="0,0,24,0">
+                    <TextBlock Text="🎮"
+                               FontSize="20"
+                               VerticalAlignment="Center"
+                               Margin="0,0,10,0"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="GAME LAUNCHER"
+                                   FontSize="13"
+                                   FontWeight="Bold"
+                                   Foreground="White"/>
+                        <TextBlock Text="YOUR LIBRARY"
+                                   FontSize="9"
+                                   FontWeight="SemiBold"
+                                   Foreground="#4B5563"/>
+                    </StackPanel>
+                </StackPanel>
 
                 <!-- SEARCH -->
-                <TextBox x:Name="SearchBox"
-                         Grid.Column="1"
-                         Height="40"
-                         Margin="10,0"
-                         Background="#1F2937"
-                         Foreground="White"
-                         BorderThickness="0"
-                         Padding="12"
-                         VerticalContentAlignment="Center"
-                         FontSize="14"
-                         Text="Search games..."
-                         TextChanged="SearchBox_TextChanged"/>
+                <Border Grid.Column="1"
+                        Background="#1A2035"
+                        CornerRadius="8"
+                        BorderBrush="#2D3748"
+                        BorderThickness="1"
+                        Margin="0,14">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="🔍"
+                                   FontSize="12"
+                                   VerticalAlignment="Center"
+                                   Opacity="0.4"
+                                   Margin="10,0,4,0"/>
+                        <TextBox x:Name="SearchBox"
+                                 Grid.Column="1"
+                                 Background="Transparent"
+                                 Foreground="White"
+                                 CaretBrush="White"
+                                 BorderThickness="0"
+                                 Padding="4,0,10,1"
+                                 VerticalContentAlignment="Center"
+                                 FontSize="13"
+                                 Text="Search games..."
+                                 TextChanged="SearchBox_TextChanged"/>
+                    </Grid>
+                </Border>
 
                 <!-- SORT -->
-                <ComboBox x:Name="SortBox"
-                          Grid.Column="2"
-                          Height="40"
-                          Margin="10,6,6,-2"
-                          Background="#1F2937"
-                          Foreground="black"
-                          BorderThickness="0"
-                          SelectionChanged="SortBox_SelectionChanged" Grid.ColumnSpan="2">
-                    <ComboBoxItem Content="A-Z" IsSelected="True"/>
-                    <ComboBoxItem Content="Z-A"/>
-                    <ComboBoxItem Content="Rating"/>
-                    <ComboBoxItem Content="Release Date"/>
-                </ComboBox>
+                <Border Grid.Column="2"
+                        Background="#1A2035"
+                        CornerRadius="8"
+                        BorderBrush="#2D3748"
+                        BorderThickness="1"
+                        Margin="10,14">
+                    <ComboBox x:Name="SortBox"
+                              Background="Transparent"
+                              Foreground="#94A3B8"
+                              BorderThickness="0"
+                              Padding="8,0"
+                              VerticalContentAlignment="Center"
+                              SelectionChanged="SortBox_SelectionChanged">
+                        <ComboBoxItem Content="Sort: A – Z" IsSelected="True"/>
+                        <ComboBoxItem Content="Sort: Z – A"/>
+                        <ComboBoxItem Content="Sort: Rating"/>
+                        <ComboBoxItem Content="Sort: Release"/>
+                    </ComboBox>
+                </Border>
 
-                <!-- REFRESH BUTTON -->
-                <Button Grid.Column="4"
-                        Content="Refresh"
-                        Height="40"
-                        Margin="6"
-                        Background="#6366F1"
-                        Foreground="White"
-                        BorderThickness="0"
-                        FontWeight="SemiBold"
-                        Cursor="Hand"
+                <!-- REFRESH -->
+                <Button Grid.Column="3"
+                        Content="↻  Refresh"
+                        Height="36"
+                        Margin="0,0,4,0"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource HeaderButtonStyle}"
                         Click="RefreshLibrary_Click"/>
 
             </Grid>
         </Border>
 
         <!-- ================= GAME GRID ================= -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      Padding="0">
 
             <ListBox x:Name="GameList"
                      Background="Transparent"
                      BorderThickness="0"
+                     Padding="8,12"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 
                 <ListBox.ItemsPanel>
@@ -103,16 +234,16 @@
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
 
-                <!-- CARD TEMPLATE -->
+                <!-- ===== CARD TEMPLATE ===== -->
                 <ListBox.ItemTemplate>
                     <DataTemplate>
 
-                        <Border Width="240"
-        Height="330"
-        Margin="12"
-        CornerRadius="12"
-        Background="#111827"
-        RenderTransformOrigin="0.5,0.5">
+                        <Border Width="225"
+                                Height="325"
+                                Margin="10"
+                                CornerRadius="12"
+                                Background="#13192A"
+                                RenderTransformOrigin="0.5,0.5">
 
                             <Border.RenderTransform>
                                 <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -120,126 +251,147 @@
 
                             <Border.Style>
                                 <Style TargetType="Border">
-
-                                    <Setter Property="RenderTransform">
-                                        <Setter.Value>
-                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                        </Setter.Value>
-                                    </Setter>
-
-                                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-
                                     <Setter Property="Effect">
                                         <Setter.Value>
-                                            <DropShadowEffect BlurRadius="12"
-                                  ShadowDepth="3"
-                                  Opacity="0.25"/>
+                                            <DropShadowEffect BlurRadius="14"
+                                                              ShadowDepth="4"
+                                                              Opacity="0.35"
+                                                              Color="#000000"/>
                                         </Setter.Value>
                                     </Setter>
-
                                     <Style.Triggers>
-
                                         <Trigger Property="IsMouseOver" Value="True">
-
                                             <Trigger.EnterActions>
                                                 <BeginStoryboard>
                                                     <Storyboard>
-
                                                         <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                             To="1.05"
-                                             Duration="0:0:0.12"/>
-
+                                                                         To="1.04" Duration="0:0:0.14"/>
                                                         <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                             To="1.05"
-                                             Duration="0:0:0.12"/>
-
+                                                                         To="1.04" Duration="0:0:0.14"/>
                                                     </Storyboard>
                                                 </BeginStoryboard>
                                             </Trigger.EnterActions>
-
                                             <Trigger.ExitActions>
                                                 <BeginStoryboard>
                                                     <Storyboard>
-
                                                         <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                             To="1"
-                                             Duration="0:0:0.12"/>
-
+                                                                         To="1" Duration="0:0:0.14"/>
                                                         <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                             To="1"
-                                             Duration="0:0:0.12"/>
-
+                                                                         To="1" Duration="0:0:0.14"/>
                                                     </Storyboard>
                                                 </BeginStoryboard>
                                             </Trigger.ExitActions>
-
+                                            <!-- Indigo glow on hover -->
                                             <Setter Property="Effect">
                                                 <Setter.Value>
-                                                    <DropShadowEffect BlurRadius="25"
-                                          ShadowDepth="8"
-                                          Opacity="0.4"/>
+                                                    <DropShadowEffect BlurRadius="28"
+                                                                      ShadowDepth="0"
+                                                                      Opacity="0.55"
+                                                                      Color="#4F46E5"/>
                                                 </Setter.Value>
                                             </Setter>
-
                                         </Trigger>
-
                                     </Style.Triggers>
-
                                 </Style>
                             </Border.Style>
-                            
+
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="150"/>
+                                    <RowDefinition Height="145"/>
+                                    <!-- Cover -->
                                     <RowDefinition Height="*"/>
-                                    <RowDefinition Height="50"/>
+                                    <!-- Info -->
+                                    <RowDefinition Height="46"/>
+                                    <!-- Button -->
                                 </Grid.RowDefinitions>
 
-                                <!-- IMAGE -->
-                                <Image Source="{Binding ImagePath}"
-                                       Stretch="Fill"/>
+                                <!-- COVER IMAGE -->
+                                <Border Grid.Row="0" CornerRadius="12,12,0,0" ClipToBounds="True">
+                                    <Grid>
+                                        <Image Source="{Binding ImagePath}"
+                                               Stretch="UniformToFill"/>
 
-                                <!-- INFO -->
-                                <StackPanel Grid.Row="1" Margin="10">
+                                        <!-- Bottom fade so text bleeds nicely -->
+                                        <Border>
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                    <GradientStop Color="Transparent" Offset="0.55"/>
+                                                    <GradientStop Color="#13192A" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                        </Border>
+
+                                        <!-- LAUNCHER BADGE (top-right) -->
+                                        <Border HorizontalAlignment="Right"
+                                                VerticalAlignment="Top"
+                                                Margin="0,8,8,0"
+                                                Background="#BB000000"
+                                                CornerRadius="4"
+                                                Padding="6,2">
+                                            <TextBlock Text="{Binding Launcher}"
+                                                       Foreground="#94A3B8"
+                                                       FontSize="9"
+                                                       FontWeight="Bold"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+
+                                <!-- GAME INFO -->
+                                <StackPanel Grid.Row="1" Margin="12,8,12,2" VerticalAlignment="Top">
+
+                                    <!-- Name -->
                                     <TextBlock Text="{Binding Name}"
-                                               Foreground="White"
-                                               FontSize="14"
+                                               Foreground="#F1F5F9"
+                                               FontSize="13"
                                                FontWeight="Bold"
-                                               TextWrapping="Wrap"/>
+                                               TextWrapping="Wrap"
+                                               TextTrimming="CharacterEllipsis"
+                                               MaxHeight="38"/>
 
+                                    <!-- Genre in accent colour -->
                                     <TextBlock Text="{Binding Genre}"
-                                               Foreground="#9CA3AF"
-                                               FontSize="12"/>
+                                               Foreground="#6366F1"
+                                               FontSize="11"
+                                               Margin="0,3,0,0"/>
 
-                                    <TextBlock Text="{Binding ReleaseDate}"
-                                               Foreground="#6B7280"
-                                               FontSize="11"/>
+                                    <!-- Rating + Release inline -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                        <TextBlock Text="★"
+                                                   Foreground="#FBBF24"
+                                                   FontSize="11"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,3,0"/>
+                                        <TextBlock Text="{Binding Rating, StringFormat={}{0:F1}}"
+                                                   Foreground="#94A3B8"
+                                                   FontSize="11"
+                                                   VerticalAlignment="Center"/>
+                                        <TextBlock Text="  ·  "
+                                                   Foreground="#374151"
+                                                   FontSize="11"/>
+                                        <TextBlock Text="{Binding ReleaseDate}"
+                                                   Foreground="#4B5563"
+                                                   FontSize="11"
+                                                   VerticalAlignment="Center"/>
+                                    </StackPanel>
 
-                                    
                                 </StackPanel>
 
                                 <!-- PLAY BUTTON -->
                                 <Button Grid.Row="2"
-                                        Content="Play"
-                                        Margin="10"
-                                        Background="#4F46E5"
-                                        Foreground="White"
-                                        BorderThickness="0"
-                                        Cursor="Hand"
+                                        Content="▶  PLAY"
+                                        Margin="12,0,12,12"
+                                        Style="{StaticResource PlayButtonStyle}"
                                         Tag="{Binding ExecutablePath}"
                                         Click="PlayGame_Click"/>
 
                             </Grid>
-
                         </Border>
 
                     </DataTemplate>
                 </ListBox.ItemTemplate>
 
             </ListBox>
-
         </ScrollViewer>
 
     </Grid>
-
 </Window>
